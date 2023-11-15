@@ -1,0 +1,28 @@
+version: '3.8'
+services:
+  web:
+    container_name: hsa8_web
+    platform: linux/x86_64
+    build: ./application
+    working_dir: /application
+    environment:
+      - FLASK_DEBUG=1
+    volumes:
+      - ./application:/application:rw
+      - ./static:/static:rw
+    ports:
+      - 8081:5000
+    command: flask run
+
+  nginx:
+    container_name: hsa8_nginx
+    platform: linux/x86_64
+    image: nginx:1.19-alpine
+    volumes:
+      - ./nginx/nginx.conf:/etc/nginx/nginx.conf:ro
+    ports:
+      - '8080:80'
+    depends_on:
+      - web
+    links:
+      - web
